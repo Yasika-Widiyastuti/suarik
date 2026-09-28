@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Bekal Suarik — Suarik{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <header class="page-head">
+            <span class="eyebrow">Bekal Suarik</span>
+            <h1>Bacaan singkat untuk langkah yang lebih ringan.</h1>
+            <p>Konten edukatif umum. Bukan nasihat medis atau diagnosis.</p>
+        </header>
+
+        <div class="resources-toolbar">
+            <label class="search-field">
+                <span class="visually-hidden">Cari bekal</span>
+                <input type="search" id="resource-search" placeholder="Cari topik, judul, atau kata kunci">
+            </label>
+            <div class="filter-chips" role="tablist" aria-label="Filter kategori">
+                <button type="button" class="chip chip-filter is-active" data-cat="all" role="tab" aria-selected="true">Semua</button>
+                {% for c in categories %}
+                <button type="button" class="chip chip-filter" data-cat="{{ c }}" role="tab" aria-selected="false">{{ c }}</button>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="grid grid-3 resource-grid" id="resource-grid">
+            {% for r in resources %}
+            <article class="card resource-card" data-cat="{{ r.category }}"
+                     data-search="{{ (r.title ~ ' ' ~ r.summary ~ ' ' ~ r.category)|lower }}">
+                <span class="pill">{{ r.category }}</span>
+                <h3>{{ r.title }}</h3>
+                <p class="resource-summary">{{ r.summary }}</p>
+                <p class="muted small">{{ r.reading_time }} menit baca</p>
+                <details class="resource-details">
+                    <summary class="btn btn-ghost btn-sm">Baca Ringkasan</summary>
+                    <p class="resource-detail-text">{{ r.detail }}</p>
+                </details>
+            </article>
+            {% endfor %}
+        </div>
+
+        <p id="resource-empty" class="muted center" hidden>Tidak ada bekal yang cocok. Coba kata kunci lain.</p>
+
+        <section class="card cta-help">
+            <h2>Butuh bantuan lebih lanjut?</h2>
+            <p>Kalau kamu merasa membutuhkan dukungan lebih lanjut, kunjungi halaman Suarakan Butuhmu.</p>
+            <a href="{{ url_for('help_page') }}" class="btn btn-primary">Buka Suarakan Butuhmu</a>
+        </section>
+    </div>
+</section>
+
+<script>
+// Filter dan pencarian sederhana untuk resource
+(function(){
+    var search = document.getElementById('resource-search');
+    var chips = document.querySelectorAll('.filter-chips .chip-filter');
+    var cards = document.querySelectorAll('#resource-grid .resource-card');
+    var empty = document.getElementById('resource-empty');
+    var activeCat = 'all';
+
+    function applyFilter(){
+        var q = (search.value || '').toLowerCase().trim();
+        var visible = 0;
+        cards.forEach(function(card){
+            var catMatch = (activeCat === 'all') || (card.dataset.cat === activeCat);
+            var searchMatch = !q || (card.dataset.search.indexOf(q) !== -1);
+            if (catMatch && searchMatch) {
+                card.hidden = false; visible++;
+            } else {
+                card.hidden = true;
+            }
+        });
+        empty.hidden = visible !== 0;
+    }
+
+    chips.forEach(function(chip){
+        chip.addEventListener('click', function(){
+            chips.forEach(function(c){ c.classList.remove('is-active'); c.setAttribute('aria-selected','false'); });
+            chip.classList.add('is-active');
+            chip.setAttribute('aria-selected','true');
+            activeCat = chip.dataset.cat;
+            applyFilter();
+        });
+    });
+    search.addEventListener('input', applyFilter);
+})();
+</script>
+{% endblock %}

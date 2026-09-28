@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Suarik — platform refleksi dan perencanaan aksi mikro untuk mahasiswa tingkat akhir.">
+    <title>{% block title %}{{ brand_name }} — {{ brand_tagline }}{% endblock %}</title>
+
+    {# Font Google Fonts via CDN. Aplikasi tetap terbaca bila CDN gagal. #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
+
+    <header class="site-header" role="banner">
+        <div class="container header-inner">
+            <a href="{{ url_for('index') }}" class="brand" aria-label="{{ brand_name }} — beranda">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" width="28" height="28" focusable="false">
+                        <circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <path d="M6 16 Q10 8 14 16 T22 16 T30 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <span class="brand-text">
+                    <span class="brand-name">{{ brand_name }}</span>
+                    <span class="brand-sub">Dengarkan dirimu.</span>
+                </span>
+            </a>
+
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Buka menu navigasi">
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+                <span class="nav-toggle-bar"></span>
+            </button>
+
+            <nav id="primary-nav" class="primary-nav" aria-label="Navigasi utama">
+                <ul>
+                    <li><a href="{{ url_for('index') }}" class="{{ 'active' if active == 'beranda' else '' }}">Beranda</a></li>
+                    <li><a href="{{ url_for('checkin') }}" class="{{ 'active' if active == 'checkin' else '' }}">Suara Hari Ini</a></li>
+                    <li><a href="{{ url_for('dashboard') }}" class="{{ 'active' if active == 'dashboard' else '' }}">Jejak Suarik</a></li>
+                    <li><a href="{{ url_for('planner') }}" class="{{ 'active' if active == 'planner' else '' }}">Langkah Kecilku</a></li>
+                    <li><a href="{{ url_for('journal') }}" class="{{ 'active' if active == 'journal' else '' }}">Ruang Cerita</a></li>
+                    <li><a href="{{ url_for('resources') }}" class="{{ 'active' if active == 'resources' else '' }}">Bekal Suarik</a></li>
+                </ul>
+                <a href="{{ url_for('checkin') }}" class="btn btn-primary nav-cta">Mulai Check-in</a>
+            </nav>
+        </div>
+    </header>
+
+    {# Flash message toast container #}
+    <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="true">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="toast toast-{{ category }}" role="status">
+                    <span class="toast-icon" aria-hidden="true"></span>
+                    <span class="toast-text">{{ message }}</span>
+                    <button type="button" class="toast-close" aria-label="Tutup notifikasi">×</button>
+                </div>
+            {% endfor %}
+        {% endwith %}
+    </div>
+
+    <main id="main-content" role="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <span class="brand-name">{{ brand_name }}</span>
+                <p class="footer-tagline">{{ brand_tagline }}</p>
+            </div>
+            <nav class="footer-nav" aria-label="Navigasi footer">
+                <a href="{{ url_for('index') }}">Beranda</a>
+                <a href="{{ url_for('checkin') }}">Suara Hari Ini</a>
+                <a href="{{ url_for('dashboard') }}">Jejak Suarik</a>
+                <a href="{{ url_for('planner') }}">Langkah Kecilku</a>
+                <a href="{{ url_for('journal') }}">Ruang Cerita</a>
+                <a href="{{ url_for('resources') }}">Bekal Suarik</a>
+                <a href="{{ url_for('help_page') }}">Suarakan Butuhmu</a>
+                <a href="{{ url_for('about') }}">Tentang</a>
+            </nav>
+            <p class="footer-disclaimer">
+                Suarik adalah alat refleksi diri dan bukan pengganti bantuan profesional atau layanan darurat.
+            </p>
+            <p class="footer-copy">© {{ current_year }} {{ brand_name }}. Dibuat untuk demonstrasi.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

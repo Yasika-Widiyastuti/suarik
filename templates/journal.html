@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Ruang Cerita — Suarik{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <header class="page-head">
+            <span class="eyebrow">Ruang Cerita</span>
+            <h1>Ruang untuk Bernapas</h1>
+            <p>Tidak semua hal harus langsung diselesaikan. Kadang, menuliskannya adalah cara untuk memberi ruang.</p>
+        </header>
+
+        <div class="grid grid-2 journal-grid">
+            <section class="card form-card">
+                <h2>Tulis cerita baru</h2>
+                <form method="POST" action="{{ url_for('journal_add') }}" class="stack">
+                    <div class="field">
+                        <label for="j-title">Judul (opsional)</label>
+                        <input type="text" id="j-title" name="title" maxlength="120" placeholder="Contoh: hari yang berat">
+                    </div>
+                    <div class="field">
+                        <label for="j-topic">Topik</label>
+                        <select id="j-topic" name="topic" required>
+                            {% for t in topics %}
+                            <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="j-content">Isi cerita (maks 1500 karakter)</label>
+                        <textarea id="j-content" name="content" rows="8" maxlength="1500" required
+                                  placeholder="Tulis apa saja yang ingin kamu suarakan hari ini."></textarea>
+                        <div class="char-counter"><span id="j-count">0</span> / 1500</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Simpan Cerita</button>
+                </form>
+            </section>
+
+            <section class="card insight-card">
+                <span class="card-eyebrow">Insight ringan</span>
+                <p>{{ insight }}</p>
+                <p class="muted small">Insight ini hanya cerminan dari topik yang paling sering kamu tulis, bukan analisis psikologis.</p>
+            </section>
+        </div>
+
+        <section class="journal-list">
+            <h2>Cerita yang tersimpan</h2>
+            {% if journals %}
+            <ul class="stack-lg">
+                {% for j in journals %}
+                <li class="card journal-entry">
+                    <header class="journal-head">
+                        <div>
+                            <h3>{{ j.title or 'Tanpa judul' }}</h3>
+                            <p class="muted small">{{ j.topic }} · {{ j.created_at }}</p>
+                        </div>
+                        <form method="POST" action="{{ url_for('journal_delete', journal_id=j.id) }}"
+                              onsubmit="return confirm('Hapus cerita ini?');">
+                            <button type="submit" class="btn btn-ghost btn-sm btn-danger">Hapus</button>
+                        </form>
+                    </header>
+                    <p class="journal-content">{{ j.content }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="card empty-state">
+                <h3>Belum ada cerita.</h3>
+                <p>Kamu bisa mulai dari satu paragraf singkat. Tidak ada yang menilai.</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</section>
+
+<script>
+// Character counter untuk textarea jurnal
+(function(){
+    var ta = document.getElementById('j-content');
+    var counter = document.getElementById('j-count');
+    if (!ta || !counter) return;
+    function update(){ counter.textContent = ta.value.length; }
+    ta.addEventListener('input', update);
+    update();
+})();
+</script>
+{% endblock %}

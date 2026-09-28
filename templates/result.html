@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Yang Sedang Berbicara — Suarik{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container-narrow">
+        <header class="page-head">
+            <span class="eyebrow">Yang Sedang Berbicara</span>
+            <h1>{{ greeting }}</h1>
+            <p class="muted">Check-in disimpan pada {{ checkin.created_at }}</p>
+        </header>
+
+        {% if show_alert %}
+        <div class="alert alert-support" role="alert">
+            <strong>Kamu tidak harus menghadapi semuanya sendirian.</strong>
+            <p>
+                Jika kamu merasa tidak aman atau ingin menyakiti diri sendiri,
+                segera hubungi orang tepercaya, layanan darurat setempat, atau tenaga profesional.
+                Kunjungi juga halaman <a href="{{ url_for('help_page') }}">Suarakan Butuhmu</a>.
+            </p>
+        </div>
+        {% endif %}
+
+        <div class="grid grid-2">
+            <article class="card summary-card">
+                <span class="card-eyebrow">Tingkat tekanan</span>
+                <div class="stress-badge stress-{{ stress_text|lower|replace(' ', '-') }}">
+                    <span class="stress-number">{{ checkin.stress_level }}</span>
+                    <span class="stress-of">/10</span>
+                    <span class="stress-text">{{ stress_text }}</span>
+                </div>
+                <p>Angka ini hanya cerminan sesaat, bukan penilaian atas dirimu.</p>
+            </article>
+
+            <article class="card summary-card">
+                <span class="card-eyebrow">Fokus utama hari ini</span>
+                <h2 class="focus-title">{{ focus }}</h2>
+                <p>{{ focus_explanation }}</p>
+            </article>
+        </div>
+
+        <section class="card recommendation-card">
+            <header class="card-head">
+                <h2>Tiga langkah kecil yang bisa dicoba</h2>
+                <p class="muted">Pilih yang paling terjangkau hari ini. Tidak perlu semuanya.</p>
+            </header>
+            <ul class="recommendation-list">
+                {% for rec in recommendations %}
+                <li class="recommendation-item">
+                    <div class="rec-body">
+                        <h3>{{ rec.title }}</h3>
+                        <p class="rec-meta">
+                            <span class="pill">{{ rec.duration }} menit</span>
+                            <span class="pill pill-outline">{{ focus }}</span>
+                        </p>
+                        <p class="rec-reason">{{ rec.reason }}</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('planner_add_from_result') }}">
+                        <input type="hidden" name="title" value="{{ rec.title }}">
+                        <input type="hidden" name="category" value="{{ focus if focus in ['Akademik','Karier','Finansial','Relasi','Burnout','Personal'] else 'Personal' }}">
+                        <input type="hidden" name="duration" value="{{ rec.duration }}">
+                        <button type="submit" class="btn btn-primary btn-sm">Tambahkan ke Langkah Kecilku</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="card breathing-card">
+            <header class="card-head">
+                <h2>Beri jeda untuk dirimu</h2>
+                <p class="muted">Latihan napas 4–4–6. Tarik 4 detik, tahan 4 detik, hembuskan 6 detik.</p>
+            </header>
+            <div class="breathing-visual" id="breathing-visual" aria-hidden="true">
+                <div class="breathing-circle" id="breathing-circle"></div>
+            </div>
+            <p class="breathing-phase" id="breathing-phase" aria-live="polite">Tekan mulai untuk memulai.</p>
+            <div class="breathing-controls">
+                <button type="button" class="btn btn-primary" id="breathing-start">Mulai</button>
+                <button type="button" class="btn btn-ghost" id="breathing-pause" disabled>Jeda</button>
+                <button type="button" class="btn btn-ghost" id="breathing-reset">Reset</button>
+            </div>
+        </section>
+
+        {% if checkin.note %}
+        <section class="card note-card">
+            <span class="card-eyebrow">Catatanmu</span>
+            <p class="note-text">{{ checkin.note }}</p>
+        </section>
+        {% endif %}
+
+        <div class="page-actions">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-ghost">Buka Jejak Suarik</a>
+            <a href="{{ url_for('planner') }}" class="btn btn-primary">Buka Langkah Kecilku</a>
+        </div>
+    </div>
+</section>
+
+<script>
+// Breathing exercise 4-4-6
+(function() {
+    var phases = [
+        { name: "Tarik napas", duration: 4000, cls: "inhale" },
+        { name: "Tahan", duration: 4000, cls: "hold" },
+        { name: "Hembuskan", duration: 6000, cls: "exhale" }
+    ];
+    var circle = document.getElementById('breathing-circle');
+    var label = document.getElementById('breathing-phase');
+    var btnStart = document.getElementById('breathing-start');
+    var btnPause = document.getElementById('breathing-pause');
+    var btnReset = document.getElementById('breathing-reset');
+    var idx = 0;
+    var timer = null;
+    var running = false;
+
+    function applyPhase() {
+        var p = phases[idx];
+        circle.className = 'breathing-circle ' + p.cls;
+        label.textContent = p.name + ' (' + (p.duration / 1000) + ' detik)';
+    }
+
+    function tick() {
+        applyPhase();
+        timer = setTimeout(function() {
+            idx = (idx + 1) % phases.length;
+            if (running) tick();
+        }, phases[idx].duration);
+    }
+
+    function start() {
+        if (running) return;
+        running = true;
+        btnStart.disabled = true;
+        btnPause.disabled = false;
+        tick();
+    }
+    function pause() {
+        running = false;
+        btnStart.disabled = false;
+        btnPause.disabled = true;
+        if (timer) clearTimeout(timer);
+        label.textContent = 'Dijeda. Tekan mulai untuk melanjutkan.';
+    }
+    function reset() {
+        running = false;
+        idx = 0;
+        if (timer) clearTimeout(timer);
+        circle.className = 'breathing-circle';
+        label.textContent = 'Tekan mulai untuk memulai.';
+        btnStart.disabled = false;
+        btnPause.disabled = true;
+    }
+
+    btnStart.addEventListener('click', start);
+    btnPause.addEventListener('click', pause);
+    btnReset.addEventListener('click', reset);
+})();
+</script>
+{% endblock %}

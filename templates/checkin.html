@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Suara Hari Ini — Suarik{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container-narrow">
+        <header class="page-head">
+            <span class="eyebrow">Suara Hari Ini</span>
+            <h1>Beri jeda sebentar untuk mendengarkan dirimu.</h1>
+            <p>Empat langkah singkat, sekitar dua menit. Tidak ada jawaban yang salah.</p>
+        </header>
+
+        <form id="checkin-form" method="POST" action="{{ url_for('checkin') }}" novalidate class="card form-card">
+            <div class="progress-indicator" aria-hidden="true">
+                <span class="progress-step active" data-step="1">1</span>
+                <span class="progress-line"></span>
+                <span class="progress-step" data-step="2">2</span>
+                <span class="progress-line"></span>
+                <span class="progress-step" data-step="3">3</span>
+                <span class="progress-line"></span>
+                <span class="progress-step" data-step="4">4</span>
+            </div>
+
+            {# --- Step 1: Emosi --- #}
+            <fieldset class="form-step active" data-step="1">
+                <legend>
+                    <span class="step-title">Langkah 1</span>
+                    <h2>Apa yang sedang terdengar di dalam dirimu hari ini?</h2>
+                </legend>
+                <div class="emotion-grid" role="radiogroup" aria-label="Pilih satu emosi">
+                    {% for emo in emotions %}
+                    <label class="emotion-card {{ 'is-selected' if form_data.emotion == emo else '' }}">
+                        <input type="radio" name="emotion" value="{{ emo }}"
+                               {% if form_data.emotion == emo %}checked{% endif %} required>
+                        <span class="emotion-icon" aria-hidden="true"></span>
+                        <span class="emotion-label">{{ emo }}</span>
+                        <span class="emotion-desc">
+                            {% if emo == 'Tenang' %}Hari terasa cukup lapang.
+                            {% elif emo == 'Bersemangat' %}Ada energi untuk memulai.
+                            {% elif emo == 'Cemas' %}Pikiran terasa penuh dan tidak tenang.
+                            {% elif emo == 'Kewalahan' %}Terlalu banyak yang datang bersamaan.
+                            {% elif emo == 'Lelah' %}Energi terasa habis meski hari baru mulai.
+                            {% elif emo == 'Sedih' %}Ada rasa berat yang ingin didengarkan.
+                            {% endif %}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <p class="field-error" data-error-for="emotion" hidden>Pilih satu emosi yang paling menggambarkan hari ini.</p>
+                <div class="form-nav">
+                    <span></span>
+                    <button type="button" class="btn btn-primary btn-next" data-next="2">Lanjut</button>
+                </div>
+            </fieldset>
+
+            {# --- Step 2: Stress level --- #}
+            <fieldset class="form-step" data-step="2">
+                <legend>
+                    <span class="step-title">Langkah 2</span>
+                    <h2>Seberapa berat beban yang kamu rasakan?</h2>
+                </legend>
+                <div class="slider-wrap">
+                    <input type="range" id="stress_level" name="stress_level" min="1" max="10"
+                           value="{{ form_data.stress_level or 5 }}" step="1" aria-describedby="stress-help stress-value">
+                    <div class="slider-value" id="stress-value" aria-live="polite">
+                        <span class="slider-number">{{ form_data.stress_level or 5 }}</span>
+                        <span class="slider-label" id="stress-label">Sedang</span>
+                    </div>
+                </div>
+                <p id="stress-help" class="field-help">1–3 ringan · 4–6 sedang · 7–8 berat · 9–10 sangat berat.</p>
+                <div class="form-nav">
+                    <button type="button" class="btn btn-ghost btn-prev" data-prev="1">Kembali</button>
+                    <button type="button" class="btn btn-primary btn-next" data-next="3">Lanjut</button>
+                </div>
+            </fieldset>
+
+            {# --- Step 3: Area masalah --- #}
+            <fieldset class="form-step" data-step="3">
+                <legend>
+                    <span class="step-title">Langkah 3</span>
+                    <h2>Apa yang paling banyak memenuhi pikiranmu?</h2>
+                </legend>
+                <div class="area-grid">
+                    {% for label, field, display in area_choices %}
+                    <label class="area-card {{ 'is-selected' if label in form_data.areas else '' }}">
+                        <input type="checkbox" name="areas" value="{{ label }}"
+                               {% if label in form_data.areas %}checked{% endif %}>
+                        <span class="area-check" aria-hidden="true">
+                            <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        </span>
+                        <span class="area-text">
+                            <span class="area-title">{{ display }}</span>
+                            <span class="area-desc">{{ label }}</span>
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+                <p class="field-error" data-error-for="areas" hidden>Pilih minimal satu area yang sedang membebani.</p>
+                <div class="form-nav">
+                    <button type="button" class="btn btn-ghost btn-prev" data-prev="2">Kembali</button>
+                    <button type="button" class="btn btn-primary btn-next" data-next="4">Lanjut</button>
+                </div>
+            </fieldset>
+
+            {# --- Step 4: Note --- #}
+            <fieldset class="form-step" data-step="4">
+                <legend>
+                    <span class="step-title">Langkah 4</span>
+                    <h2>Ceritakan sedikit jika kamu nyaman.</h2>
+                </legend>
+                <label for="note" class="field-label">Catatan (opsional, maksimal 500 karakter)</label>
+                <textarea id="note" name="note" rows="5" maxlength="500"
+                          placeholder="Tulis bebas. Kamu tidak wajib menuliskan detail pribadi.">{{ form_data.note }}</textarea>
+                <div class="char-counter"><span id="note-count">{{ form_data.note|length }}</span> / 500</div>
+                <div class="form-nav">
+                    <button type="button" class="btn btn-ghost btn-prev" data-prev="3">Kembali</button>
+                    <button type="submit" class="btn btn-primary" id="checkin-submit">
+                        <span class="btn-label">Simpan Check-in</span>
+                        <span class="btn-spinner" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/checkin.js') }}"></script>
+{% endblock %}

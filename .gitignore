@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+env/
+
+# Database lokal (jangan ikut di-commit)
+*.db
+suarik.db
+
+# IDE
+.vscode/
+.idea/
+.DS_Store

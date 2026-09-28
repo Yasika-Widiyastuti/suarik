@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Suarik — Dengarkan dirimu, temukan langkahmu{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container hero-inner">
+        <div class="hero-copy">
+            <span class="eyebrow">Ruang refleksi untuk mahasiswa tingkat akhir</span>
+            <h1>Kadang, yang kamu butuhkan bukan jawaban—hanya ruang untuk mendengarkan dirimu sendiri.</h1>
+            <p class="lead">
+                Suarik membantumu mengenali apa yang sedang terasa berat, menemukan fokus terdekat,
+                dan memulai satu langkah kecil yang bisa dilakukan hari ini.
+            </p>
+            <div class="hero-actions">
+                <a href="{{ url_for('checkin') }}" class="btn btn-primary btn-xl">Mulai Suara Hari Ini</a>
+                <a href="#cara-kerja" class="text-link">Lihat cara kerja →</a>
+            </div>
+            <p class="hero-note">Gratis, lokal, tanpa akun. Data hanya tersimpan di perangkatmu.</p>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+            {# Waveform yang mengalir menjadi garis perjalanan berujung langkah kecil #}
+            <svg class="hero-flow" viewBox="0 0 480 360" preserveAspectRatio="xMidYMid meet" focusable="false">
+                <defs>
+                    <linearGradient id="flowGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#8B7DB8"/>
+                        <stop offset="55%" stop-color="#7466A6"/>
+                        <stop offset="100%" stop-color="#E99A7A"/>
+                    </linearGradient>
+                    <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#8B7DB8" stop-opacity="0.9"/>
+                        <stop offset="100%" stop-color="#8B7DB8" stop-opacity="0.3"/>
+                    </linearGradient>
+                </defs>
+
+                {# Waveform di sisi kiri: suara #}
+                <g class="hero-wave">
+                    <path d="M20 130 Q35 90 50 130 T80 130 T110 130 T140 130 T170 130"
+                          fill="none" stroke="url(#waveGrad)" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M20 160 Q35 140 50 160 T80 160 T110 160 T140 160 T170 160"
+                          fill="none" stroke="url(#waveGrad)" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+                    <path d="M20 190 Q35 175 50 190 T80 190 T110 190 T140 190 T170 190"
+                          fill="none" stroke="url(#waveGrad)" stroke-width="2" stroke-linecap="round" opacity="0.5"/>
+                </g>
+
+                {# Garis perjalanan yang berbelok menuju langkah #}
+                <path d="M170 160 C 220 160, 250 100, 310 100 S 400 220, 440 260"
+                      fill="none" stroke="url(#flowGrad)" stroke-width="3" stroke-linecap="round"
+                      stroke-dasharray="6 8"/>
+
+                {# Titik besar: kondisi hari ini #}
+                <circle cx="200" cy="150" r="26" fill="#EEEAF7"/>
+                <circle cx="200" cy="150" r="14" fill="#7466A6"/>
+                <circle cx="200" cy="150" r="34" fill="none" stroke="#7466A6" stroke-opacity="0.25" stroke-width="1.5"/>
+
+                {# Tiga titik kecil: langkah berikutnya #}
+                <circle cx="285" cy="115" r="8" fill="#8B7DB8"/>
+                <circle cx="345" cy="150" r="8" fill="#E99A7A"/>
+                <circle cx="400" cy="215" r="8" fill="#202A44"/>
+            </svg>
+
+            {# Card ringkasan check-in — memperlihatkan cara kerja produk #}
+            <div class="visual-card card-checkin">
+                <div class="visual-card-head">
+                    <span class="visual-card-label">Suara Hari Ini</span>
+                    <span class="visual-time">Selasa · 08.30</span>
+                </div>
+                <div class="visual-row">
+                    <span class="visual-key">Perasaan</span>
+                    <span class="visual-val"><span class="dot dot-purple"></span>Cemas · 7/10</span>
+                </div>
+                <div class="visual-row">
+                    <span class="visual-key">Fokus terdekat</span>
+                    <span class="visual-val"><span class="pill pill-solid">Akademik</span></span>
+                </div>
+                <div class="visual-row">
+                    <span class="visual-key">Langkah kecil</span>
+                    <span class="visual-val strong">Tulis 3 poin skripsi</span>
+                </div>
+            </div>
+
+            {# Chip mini menandai langkah berikutnya #}
+            <div class="visual-steps-strip">
+                <span class="step-pill"><span class="step-num">01</span> Suarakan</span>
+                <span class="step-pill"><span class="step-num">02</span> Kenali</span>
+                <span class="step-pill active"><span class="step-num">03</span> Langkahkan</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="container">
+        <header class="section-head">
+            <h2>Banyak hal bisa terdengar bersamaan.</h2>
+            <p>Skripsi, karier, keuangan, dan lelah yang menumpuk sering datang berbarengan. Suarik membantumu memilah tanpa menghakimi.</p>
+        </header>
+        <div class="grid grid-4 issue-grid">
+            <article class="mini-card">
+                <span class="mini-index">01</span>
+                <svg class="mini-glyph" viewBox="0 0 32 32" aria-hidden="true"><rect x="6" y="5" width="20" height="22" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 11h12M10 16h12M10 21h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <h3>Skripsi dan akademik</h3>
+                <p>Tugas menumpuk, deadline mendekat, dan sulit menentukan prioritas.</p>
+            </article>
+            <article class="mini-card">
+                <span class="mini-index">02</span>
+                <svg class="mini-glyph" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 12l10-6 10 6-10 6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M6 12v9l10 6 10-6v-9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+                <h3>Karier dan masa depan</h3>
+                <p>Bingung mulai dari skill, CV, atau peluang kerja.</p>
+            </article>
+            <article class="mini-card">
+                <span class="mini-index">03</span>
+                <svg class="mini-glyph" viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="11" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 9v14M12 12h6a2.5 2.5 0 010 5h-4a2.5 2.5 0 000 5h6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <h3>Finansial</h3>
+                <p>Ingin lebih teratur mengelola pengeluaran tanpa merasa tertekan.</p>
+            </article>
+            <article class="mini-card">
+                <span class="mini-index">04</span>
+                <svg class="mini-glyph" viewBox="0 0 32 32" aria-hidden="true"><path d="M6 20c3-1 5-4 5-8s2-6 5-6 5 2 5 6-2 6-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 24h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <h3>Burnout dan kelelahan</h3>
+                <p>Tubuh ingin berhenti, tetapi pikiran terus berjalan.</p>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section id="cara-kerja" class="section">
+    <div class="container">
+        <header class="section-head">
+            <h2>Dari suara menjadi langkah.</h2>
+            <p>Tiga langkah sederhana yang bisa dijalankan dalam waktu singkat.</p>
+        </header>
+        <ol class="steps">
+            <li class="step">
+                <span class="step-number">1</span>
+                <h3>Suarakan</h3>
+                <p>Ceritakan apa yang sedang memenuhi pikiranmu lewat check-in singkat.</p>
+            </li>
+            <li class="step">
+                <span class="step-number">2</span>
+                <h3>Kenali</h3>
+                <p>Lihat area yang paling membutuhkan perhatian dari peta prioritasmu.</p>
+            </li>
+            <li class="step">
+                <span class="step-number">3</span>
+                <h3>Langkahkan</h3>
+                <p>Pilih satu tindakan kecil yang realistis dan simpan sebagai rencana.</p>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section class="section section-alt">
+    <div class="container">
+        <header class="section-head">
+            <h2>Fitur utama</h2>
+            <p>Empat ruang yang saling mendukung untuk membantumu tumbuh dengan arah.</p>
+        </header>
+        <div class="grid grid-4">
+            <article class="feature-card">
+                <h3>Suara Hari Ini</h3>
+                <p>Check-in singkat untuk mengenali emosi, tekanan, dan area yang paling terasa.</p>
+                <a href="{{ url_for('checkin') }}" class="feature-link">Mulai check-in →</a>
+            </article>
+            <article class="feature-card">
+                <h3>Peta Prioritas</h3>
+                <p>Lihat kategori yang paling menuntut perhatian dan penjelasan singkatnya.</p>
+                <a href="{{ url_for('dashboard') }}" class="feature-link">Buka jejak →</a>
+            </article>
+            <article class="feature-card">
+                <h3>Langkah Kecilku</h3>
+                <p>Simpan aksi 10–30 menit dan lihat progres tanpa merasa terbebani.</p>
+                <a href="{{ url_for('planner') }}" class="feature-link">Buka planner →</a>
+            </article>
+            <article class="feature-card">
+                <h3>Ruang Cerita</h3>
+                <p>Tuliskan yang mengganjal, meski singkat. Ruang aman tanpa penilaian.</p>
+                <a href="{{ url_for('journal') }}" class="feature-link">Tulis cerita →</a>
+            </article>
+        </div>
+    </div>
+</section>
+
+<section class="section quote-section">
+    <div class="container">
+        <blockquote>
+            <p>“Tidak semua hal harus selesai hari ini. Mungkin cukup satu langkah yang jujur.”</p>
+        </blockquote>
+        <a href="{{ url_for('checkin') }}" class="btn btn-primary">Mulai Suara Hari Ini</a>
+    </div>
+</section>
+{% endblock %}

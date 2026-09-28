@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Langkah Kecilku — Suarik{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <header class="page-head">
+            <span class="eyebrow">Langkah Kecilku</span>
+            <h1>Rencana 10 Menit</h1>
+            <p>Satu langkah kecil lebih baik daripada menunggu semuanya terasa sempurna.</p>
+        </header>
+
+        <div class="grid grid-2 planner-grid">
+            <section class="card form-card">
+                <h2>Tambah langkah baru</h2>
+                <form method="POST" action="{{ url_for('planner_add') }}" class="stack">
+                    <div class="field">
+                        <label for="title">Judul aksi</label>
+                        <input type="text" id="title" name="title" required maxlength="120"
+                               placeholder="Contoh: menulis kerangka bab 3">
+                    </div>
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="category">Kategori</label>
+                            <select id="category" name="category" required>
+                                {% for c in categories %}
+                                <option value="{{ c }}">{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="duration">Estimasi (menit)</label>
+                            <select id="duration" name="duration" required>
+                                {% for d in durations %}
+                                <option value="{{ d }}">{{ d }} menit</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="due_date">Target tanggal (opsional)</label>
+                        <input type="date" id="due_date" name="due_date">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Simpan Langkah</button>
+                </form>
+            </section>
+
+            <section class="card progress-card">
+                <h2>Progresmu</h2>
+                <div class="progress-outer" role="progressbar" aria-valuenow="{{ percent }}" aria-valuemin="0" aria-valuemax="100" aria-label="Progres langkah selesai">
+                    <div class="progress-inner" style="width: {{ percent }}%"></div>
+                </div>
+                <p class="progress-text"><strong>{{ percent }}%</strong> selesai — {{ done }} dari {{ total }} langkah</p>
+                <p class="muted">Tidak apa-apa jika angkanya kecil. Fokusnya adalah konsistensi kecil.</p>
+
+                <div class="filter-chips" role="tablist" aria-label="Filter langkah">
+                    <button type="button" class="chip chip-filter is-active" data-filter="all" role="tab" aria-selected="true">Semua</button>
+                    <button type="button" class="chip chip-filter" data-filter="pending" role="tab" aria-selected="false">Belum selesai</button>
+                    <button type="button" class="chip chip-filter" data-filter="done" role="tab" aria-selected="false">Selesai</button>
+                </div>
+            </section>
+        </div>
+
+        <section class="tasks-section">
+            <h2 class="visually-hidden">Daftar langkah</h2>
+            {% if tasks %}
+            <ul class="task-list" id="task-list">
+                {% for t in tasks %}
+                <li class="task-card {{ 'is-done' if t.completed else '' }}" data-state="{{ 'done' if t.completed else 'pending' }}">
+                    <form method="POST" action="{{ url_for('planner_toggle', task_id=t.id) }}" class="task-toggle">
+                        <button type="submit" class="task-check" aria-label="Ubah status langkah">
+                            {% if t.completed %}
+                            <svg viewBox="0 0 16 16" width="14" height="14"><path d="M3 8l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            {% endif %}
+                        </button>
+                    </form>
+                    <div class="task-body">
+                        <h3 class="task-title">{{ t.title }}</h3>
+                        <p class="task-meta">
+                            <span class="pill">{{ t.category }}</span>
+                            <span class="pill pill-outline">{{ t.duration }} menit</span>
+                            {% if t.due_date %}<span class="pill pill-outline">{{ t.due_date }}</span>{% endif %}
+                            <span class="task-status">{{ 'Selesai' if t.completed else 'Belum selesai' }}</span>
+                        </p>
+                    </div>
+                    <div class="task-actions">
+                        <button type="button" class="btn btn-ghost btn-sm task-edit-btn"
+                                data-id="{{ t.id }}" data-title="{{ t.title }}" data-category="{{ t.category }}"
+                                data-duration="{{ t.duration }}" data-due="{{ t.due_date or '' }}">Edit</button>
+                        <button type="button" class="btn btn-ghost btn-sm btn-danger task-delete-btn"
+                                data-id="{{ t.id }}" data-title="{{ t.title }}">Hapus</button>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <div class="card empty-state">
+                <h3>Belum ada langkah.</h3>
+                <p>Tambahkan satu langkah kecil dari formulir di atas, atau ambil dari rekomendasi setelah check-in.</p>
+            </div>
+            {% endif %}
+        </section>
+    </div>
+</section>
+
+{# --- Modal edit --- #}
+<div class="modal" id="edit-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="edit-title">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel">
+        <header class="modal-head">
+            <h2 id="edit-title">Edit langkah</h2>
+            <button type="button" class="modal-close" data-close aria-label="Tutup">×</button>
+        </header>
+        <form method="POST" id="edit-form" class="stack">
+            <div class="field">
+                <label for="edit-title-input">Judul</label>
+                <input type="text" id="edit-title-input" name="title" required maxlength="120">
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="edit-category">Kategori</label>
+                    <select id="edit-category" name="category" required>
+                        {% for c in categories %}
+                        <option value="{{ c }}">{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="edit-duration">Estimasi</label>
+                    <select id="edit-duration" name="duration" required>
+                        {% for d in durations %}
+                        <option value="{{ d }}">{{ d }} menit</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <label for="edit-due">Target tanggal</label>
+                <input type="date" id="edit-due" name="due_date">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost" data-close>Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{# --- Modal hapus --- #}
+<div class="modal" id="delete-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel modal-panel-sm">
+        <header class="modal-head">
+            <h2 id="delete-title">Hapus langkah?</h2>
+            <button type="button" class="modal-close" data-close aria-label="Tutup">×</button>
+        </header>
+        <p id="delete-desc">Tindakan ini tidak dapat dibatalkan.</p>
+        <form method="POST" id="delete-form">
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost" data-close>Batal</button>
+                <button type="submit" class="btn btn-danger">Hapus</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/planner.js') }}"></script>
+{% endblock %}

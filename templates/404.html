@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Halaman tidak ditemukan — Suarik{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container container-narrow center">
+        <header class="page-head">
+            <span class="eyebrow">404</span>
+            <h1>Halaman yang kamu cari tidak ditemukan.</h1>
+            <p>Mungkin alamatnya berubah atau halamannya sudah tidak ada.</p>
+        </header>
+        <div class="page-actions center">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">Kembali ke Beranda</a>
+            <a href="{{ url_for('checkin') }}" class="btn btn-ghost">Mulai Check-in</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

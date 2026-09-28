@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Tentang — Suarik{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container-narrow">
+        <header class="page-head">
+            <span class="eyebrow">Tentang Suarik</span>
+            <h1>Ruang kecil untuk quarter-life transition.</h1>
+            <p>Suarik lahir dari kebutuhan mahasiswa tingkat akhir untuk memiliki ruang refleksi yang aman, sederhana, dan tidak menghakimi.</p>
+        </header>
+
+        <section class="card">
+            <h2>Latar belakang</h2>
+            <p>Masa akhir kuliah sering datang bersamaan dengan tekanan skripsi, pertanyaan karier, kondisi finansial, dinamika relasi, dan kelelahan yang menumpuk. Suarik hadir sebagai teman refleksi harian yang membantu mengurai suara-suara itu menjadi langkah kecil yang lebih terjangkau.</p>
+        </section>
+
+        <section class="card">
+            <h2>Misi</h2>
+            <p>Membantu mahasiswa tingkat akhir menyuarakan keresahan, mengenali sumber tekanan, menentukan prioritas, dan memulai langkah kecil yang realistis dalam kehidupan sehari-hari.</p>
+        </section>
+
+        <section class="card">
+            <h2>Prinsip desain</h2>
+            <ul class="principle-list">
+                <li><strong>Mendengarkan tanpa menghakimi.</strong> Setiap wording dipilih untuk memberi ruang, bukan menyalahkan.</li>
+                <li><strong>Langkah kecil yang realistis.</strong> Aksi berdurasi 10–30 menit lebih mudah dimulai dan dituntaskan.</li>
+                <li><strong>Privasi dan keamanan.</strong> Data check-in, langkah, dan cerita tersimpan lokal di perangkatmu.</li>
+                <li><strong>Aksesibel untuk semua.</strong> Semantic HTML, kontras yang baik, dan dukungan keyboard.</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2>Teknologi</h2>
+            <p>Suarik dibangun menggunakan <strong>Flask</strong>, <strong>SQLite</strong>, HTML, CSS, JavaScript, dan <strong>Chart.js</strong>. Rekomendasi disusun secara rule-based yang transparan, bukan menggunakan AI atau algoritma tertutup.</p>
+        </section>
+
+        <section class="card">
+            <h2>Disclaimer</h2>
+            <p>Suarik adalah alat refleksi diri dan bukan pengganti bantuan profesional. Suarik tidak memberikan diagnosis medis, saran psikologis khusus, atau layanan darurat. Bila kamu memerlukan dukungan lebih lanjut, kunjungi halaman <a href="{{ url_for('help_page') }}">Suarakan Butuhmu</a>.</p>
+        </section>
+    </div>
+</section>
+{% endblock %}

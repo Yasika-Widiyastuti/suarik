@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Suarakan Butuhmu — Suarik{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container container-narrow">
+        <header class="page-head">
+            <span class="eyebrow">Suarakan Butuhmu</span>
+            <h1>Kamu tidak harus menghadapi semuanya sendirian.</h1>
+            <p>Mencari bantuan adalah tindakan berani. Berikut beberapa langkah yang bisa dipertimbangkan.</p>
+        </header>
+
+        <ol class="help-steps">
+            <li class="card help-step">
+                <span class="help-number">1</span>
+                <div>
+                    <h2>Hubungi orang tepercaya</h2>
+                    <p>Ceritakan pada teman, keluarga, atau siapa pun yang membuatmu merasa lebih tenang. Tidak perlu menceritakan semuanya sekaligus — satu kalimat pun sudah bermakna.</p>
+                </div>
+            </li>
+            <li class="card help-step">
+                <span class="help-number">2</span>
+                <div>
+                    <h2>Hubungi tenaga profesional</h2>
+                    <p>Kunjungi konselor kampus, psikolog, atau layanan kesehatan mental yang tersedia di kotamu. Berbicara dengan orang yang tepat sering meringankan beban lebih cepat dari yang kita kira.</p>
+                </div>
+            </li>
+            <li class="card help-step">
+                <span class="help-number">3</span>
+                <div>
+                    <h2>Jika berada dalam bahaya langsung</h2>
+                    <p>Segera hubungi layanan darurat setempat atau orang di sekitarmu yang bisa membantu. Keselamatanmu adalah prioritas.</p>
+                </div>
+            </li>
+        </ol>
+
+        <div class="card alert alert-support">
+            <p><strong>Catatan:</strong> Suarik bukan layanan darurat. Jika kamu berada dalam bahaya langsung, cari bantuan darurat di lokasi kamu.</p>
+        </div>
+
+        <div class="page-actions">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-ghost">Kembali ke Jejak Suarik</a>
+            <a href="{{ url_for('journal') }}" class="btn btn-primary">Tulis di Ruang Cerita</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

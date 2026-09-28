@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block title %}Jejak Suarik — Suarik{% endblock %}
+
+{% block head_extra %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <header class="page-head">
+            <span class="eyebrow">Jejak Suarik</span>
+            <h1>Perjalanan Tumbuhmu</h1>
+            <p>Lihat pola kecil dari perjalananmu, tanpa menghakimi diri sendiri.</p>
+        </header>
+
+        {% if not has_data %}
+        <div class="card empty-state">
+            <h2>Belum ada check-in tercatat.</h2>
+            <p>Mulai dari satu check-in singkat untuk melihat pola pertamamu di sini.</p>
+            <a href="{{ url_for('checkin') }}" class="btn btn-primary">Mulai Suara Hari Ini</a>
+        </div>
+        {% else %}
+
+        <div class="grid grid-4 summary-grid">
+            <article class="stat-card">
+                <span class="stat-label">Jumlah check-in</span>
+                <span class="stat-value">{{ summary.total_checkins }}</span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Rata-rata tekanan</span>
+                <span class="stat-value">{{ summary.avg_stress }}<span class="stat-of">/10</span></span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Aksi selesai</span>
+                <span class="stat-value">{{ summary.tasks_completed }}<span class="stat-of">/{{ summary.tasks_total }}</span></span>
+            </article>
+            <article class="stat-card">
+                <span class="stat-label">Fokus paling sering</span>
+                <span class="stat-value stat-focus">{{ summary.top_focus }}</span>
+            </article>
+        </div>
+
+        <div class="grid grid-2 chart-grid">
+            <section class="card chart-card">
+                <header class="card-head">
+                    <h2>Skor kategori dari check-in terbaru</h2>
+                    <p class="muted">Skor 0 berarti kategori tidak dipilih pada check-in terakhir.</p>
+                </header>
+                <div class="chart-container">
+                    <canvas id="categoryChart" height="220" aria-label="Bar chart skor kategori terbaru" role="img"></canvas>
+                </div>
+                <ul class="chart-fallback" id="categoryFallback" hidden>
+                    {% for label, val in latest_scores.items() %}
+                    <li>
+                        <span class="fallback-label">{{ label }}</span>
+                        <span class="fallback-bar" style="--v: {{ (val / 10 * 100)|int }}%"><span></span></span>
+                        <span class="fallback-value">{{ val }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="card chart-card">
+                <header class="card-head">
+                    <h2>Tren tingkat tekanan</h2>
+                    <p class="muted">Dari check-in tertua ke terbaru.</p>
+                </header>
+                <div class="chart-container">
+                    <canvas id="trendChart" height="220" aria-label="Line chart tren tingkat tekanan" role="img"></canvas>
+                </div>
+                <ol class="chart-fallback chart-fallback-inline" id="trendFallback" hidden>
+                    {% for i in range(trend_labels|length) %}
+                    <li><span>{{ trend_labels[i] }}</span><strong>{{ trend_values[i] }}</strong></li>
+                    {% endfor %}
+                </ol>
+            </section>
+        </div>
+
+        <section class="card reflection-card">
+            <span class="card-eyebrow">Refleksi mingguan</span>
+            <p>{{ weekly_reflection }}</p>
+        </section>
+        {% endif %}
+    </div>
+</section>
+
+<script id="chart-data" type="application/json">
+{
+    "categoryLabels": {{ latest_scores.keys()|list|tojson }},
+    "categoryValues": {{ latest_scores.values()|list|tojson }},
+    "trendLabels": {{ trend_labels|tojson }},
+    "trendValues": {{ trend_values|tojson }}
+}
+</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
